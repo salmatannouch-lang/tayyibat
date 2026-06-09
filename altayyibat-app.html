@@ -892,7 +892,7 @@ async function regenerate(){
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:SYS,messages:[{role:'user',content:'Fresh 15-day plan, generation #'+(generation+1)+'. Start type: '+startType+'. Vary recipes. JSON only.'}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,system:SYS,messages:[{role:'user',content:'Fresh 15-day plan, generation #'+(generation+1)+'. Start type: '+startType+'. Vary recipes. JSON only.'}]})
     });
     const data=await res.json();
     if(data.error)throw new Error(data.error.message);
