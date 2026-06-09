@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الطيبات">
+<meta name="theme-color" content="#1a3a14">
+<title>🌿 Al-Tayyibat</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@300;400;700&family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--gd:#1a3a14;--gm:#2d5a27;--gl:#4a7c3f;--gp:#e8f5e9;--am:#f4a200;--ap:#fef3cd;--cr:#fdf6e3;--cd:#f0ebe0;--br:#3d2b1f;--bl:#5c4a2a;--rd:#c62828;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--br);}
+body.ar{font-family:'Tajawal',sans-serif;}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;z-index:200;transition:opacity .3s,transform .3s;}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(.97);}
+
+/* ── PROFILE SCREEN ── */
+#profile-screen{background:linear-gradient(160deg,var(--gd) 0%,var(--gm) 55%,var(--gl) 100%);display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+.ps-header{text-align:center;padding:52px 20px 32px;}
+.ps-leaf{font-size:56px;display:block;margin-bottom:10px;}
+.ps-title{font-family:'Cormorant Garamond',serif;font-size:34px;color:#fff;font-weight:700;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,.4);}
+body.ar .ps-title{font-family:'Tajawal',sans-serif;letter-spacing:0;}
+.ps-sub{color:#c8e6c9;font-size:13px;margin-top:6px;font-weight:300;}
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px;width:100%;max-width:400px;}
+.profile-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px);}
+.profile-card:hover,.profile-card:active{background:rgba(255,255,255,.22);transform:translateY(-2px);}
+.profile-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 10px;font-family:'Lato',sans-serif;}
+.profile-name{color:#fff;font-size:14px;font-weight:700;}
+.profile-hint{color:rgba(255,255,255,.5);font-size:10px;margin-top:3px;}
+.add-profile-card{background:rgba(255,255,255,.08);border:2px dashed rgba(255,255,255,.3);border-radius:18px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;}
+.add-profile-card:hover{background:rgba(255,255,255,.15);}
+.add-icon{font-size:32px;color:rgba(255,255,255,.6);display:block;margin-bottom:8px;}
+.add-label{color:rgba(255,255,255,.7);font-size:13px;}
+
+/* ── PIN SCREEN ── */
+#pin-screen{background:linear-gradient(160deg,var(--gd) 0%,var(--gm) 60%,var(--gl) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pin-back{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+body.ar .pin-back{left:auto;right:20px;}
+.pin-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;margin:0 auto 12px;}
+.pin-name{color:#fff;font-size:20px;font-weight:700;font-family:'Cormorant Garamond',serif;margin-bottom:6px;text-align:center;}
+body.ar .pin-name{font-family:'Tajawal',sans-serif;}
+.pin-prompt{color:#c8e6c9;font-size:12px;margin-bottom:28px;text-align:center;}
+.pin-dots{display:flex;gap:14px;margin-bottom:36px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.5);transition:all .2s;}
+.pin-dot.filled{background:#fff;border-color:#fff;}
+.pin-dot.error{background:#ef5350;border-color:#ef5350;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:260px;}
+.pin-key{background:rgba(255,255,255,.15);border:none;border-radius:50%;width:72px;height:72px;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:all .15s;font-family:'Lato',sans-serif;display:flex;align-items:center;justify-content:center;}
+.pin-key:active{background:rgba(255,255,255,.35);transform:scale(.92);}
+.pin-key.empty{background:transparent;cursor:default;}
+.pin-key.del{font-size:20px;}
+.pin-error-msg{color:#ef9a9a;font-size:12px;margin-top:16px;height:18px;text-align:center;}
+
+/* ── CREATE PROFILE SCREEN ── */
+#create-screen{background:linear-gradient(160deg,var(--gd),var(--gm));display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.create-box{background:#fff;border-radius:24px;padding:28px 24px;width:100%;max-width:360px;}
+.create-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gm);font-weight:700;text-align:center;margin-bottom:20px;}
+body.ar .create-title{font-family:'Tajawal',sans-serif;}
+.color-row{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.color-dot{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
+.color-dot.selected{border-color:#fff;box-shadow:0 0 0 3px var(--gm);}
+.field-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block;}
+.field-input{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;color:var(--br);outline:none;transition:border .2s;margin-bottom:16px;}
+.field-input:focus{border-color:var(--gm);}
+.pin-setup{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+.pin-setup-key{width:52px;height:52px;border-radius:50%;border:2px solid #ddd;background:#f9f9f9;font-size:20px;font-weight:700;color:var(--br);cursor:pointer;transition:all .15s;font-family:'Lato',sans-serif;}
+.pin-setup-key:active{background:var(--gp);transform:scale(.93);}
+.pin-setup-dots{display:flex;gap:10px;justify-content:center;margin-bottom:14px;}
+.pin-setup-dot{width:14px;height:14px;border-radius:50%;border:2px solid #ccc;transition:all .2s;}
+.pin-setup-dot.filled{background:var(--gm);border-color:var(--gm);}
+.create-btns{display:flex;gap:10px;}
+.btn-cancel{flex:1;padding:12px;border:1.5px solid #ddd;border-radius:12px;background:#fff;color:#888;font-size:14px;cursor:pointer;font-family:inherit;}
+.btn-create{flex:1;padding:12px;border:none;border-radius:12px;background:var(--gm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-create:disabled{background:#bbb;cursor:not-allowed;}
+
+/* ── MAIN APP ── */
+#main-app{background:linear-gradient(160deg,var(--cr) 0%,var(--cd) 100%);display:flex;flex-direction:column;min-height:100%;}
+#main-app.hidden{opacity:0;pointer-events:none;}
+.app-header{background:linear-gradient(160deg,var(--gd) 0%,var(--gm) 55%,var(--gl) 100%);padding:0 16px 0;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+.app-header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.profile-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:none;border-radius:20px;padding:6px 12px;cursor:pointer;color:#fff;}
+.chip-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.chip-name{font-size:12px;font-weight:700;}
+.chip-switch{font-size:10px;opacity:.7;margin-left:4px;}
+body.ar .chip-switch{margin-left:0;margin-right:4px;}
+.lang-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:700;}
+.app-header-center{text-align:center;padding-bottom:14px;}
+.app-title{font-family:'Cormorant Garamond',serif;color:#fff;font-size:24px;font-weight:700;letter-spacing:1.5px;}
+body.ar .app-title{font-family:'Tajawal',sans-serif;letter-spacing:0;}
+.app-sub{color:#c8e6c9;font-size:11px;margin-top:3px;}
+.app-warning{color:#ffecb3;font-size:10px;margin-top:6px;background:rgba(0,0,0,.2);padding:3px 12px;border-radius:20px;display:inline-block;}
+.tabs{display:flex;justify-content:center;gap:5px;padding:12px 12px 8px;flex-wrap:wrap;position:sticky;top:0;z-index:50;background:linear-gradient(to bottom,var(--cr) 80%,transparent);}
+.tab-btn{padding:8px 14px;border:none;border-radius:20px;cursor:pointer;font-size:12.5px;font-family:'Cormorant Garamond',serif;font-weight:600;transition:all .2s;}
+body.ar .tab-btn{font-family:'Tajawal',sans-serif;font-size:13px;}
+.tab-btn.active{background:var(--gm);color:#fff;box-shadow:0 4px 12px rgba(45,90,39,.4);transform:translateY(-1px);}
+.tab-btn:not(.active){background:#fff;color:var(--gl);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.content{max-width:680px;margin:0 auto;padding:16px 14px 0;width:100%;}
+.panel{display:none;animation:fadeIn .25s ease;padding-bottom:20px;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── RULES ── */
+.rule-card{background:#fff;border-radius:12px;margin-bottom:8px;padding:13px 15px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--gl);display:flex;gap:11px;align-items:flex-start;}
+body.ar .rule-card{border-left:none;border-right:4px solid var(--gl);}
+.rule-icon{font-size:21px;min-width:26px;line-height:1.1;}
+.rule-title{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gm);font-size:14px;margin-bottom:2px;}
+body.ar .rule-title{font-family:'Tajawal',sans-serif;font-size:14px;}
+.rule-body{color:var(--bl);font-size:12px;line-height:1.55;font-weight:300;}
+body.ar .rule-body{font-size:12.5px;line-height:1.65;}
+.cheat-sheet{background:linear-gradient(135deg,var(--gd),var(--gl));border-radius:14px;padding:18px;margin-top:16px;color:#fff;}
+.cheat-sheet h3{font-family:'Cormorant Garamond',serif;text-align:center;font-size:17px;margin-bottom:12px;}
+body.ar .cheat-sheet h3{font-family:'Tajawal',sans-serif;}
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.cheat-item{background:rgba(255,255,255,.13);border-radius:8px;padding:7px 9px;}
+.cheat-label{font-size:11px;font-weight:700;}
+.cheat-val{font-size:10.5px;opacity:.82;margin-top:1px;}
+body.ar .cheat-val{font-size:11.5px;}
+
+/* ── PLAN ── */
+.regen-wrap{text-align:center;margin-bottom:14px;}
+.badges{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.badge{border-radius:20px;padding:3px 11px;font-size:10.5px;border:1px solid;}
+.badge-protein{background:var(--ap);border-color:var(--am);color:#7b5800;}
+.badge-rest{background:var(--gp);border-color:#81c784;color:#2e7d32;}
+.badge-gen{background:#e3f2fd;border-color:#90caf9;color:#1565c0;}
+.day-toggle{display:flex;background:#fff;border-radius:24px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.1);margin:0 auto 12px;width:fit-content;gap:4px;}
+.day-toggle-btn{padding:8px 16px;border:none;border-radius:20px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:600;transition:all .2s;background:transparent;color:#888;}
+.day-toggle-btn.active{background:var(--gm);color:#fff;box-shadow:0 2px 8px rgba(45,90,39,.35);}
+body.ar .day-toggle-btn{font-family:'Tajawal',sans-serif;}
+.regen-btn{background:linear-gradient(135deg,var(--gm),var(--gl));color:#fff;border:none;border-radius:24px;padding:11px 26px;font-size:13px;font-family:'Cormorant Garamond',serif;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(45,90,39,.4);transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+body.ar .regen-btn{font-family:'Tajawal',sans-serif;}
+.regen-btn:disabled{background:#bbb;box-shadow:none;cursor:not-allowed;}
+.error-msg{color:var(--rd);font-size:11.5px;margin-top:7px;}
+.day-card{background:#fff;border-radius:12px;margin-bottom:7px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;}
+.day-header-left{display:flex;align-items:center;gap:8px;}
+.day-badge{color:#fff;border-radius:18px;padding:2px 9px;font-size:10px;font-weight:700;min-width:36px;text-align:center;}
+.day-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:14px;color:#2d3748;}
+body.ar .day-title{font-family:'Tajawal',sans-serif;}
+.day-chevron{color:#bbb;font-size:12px;transition:transform .2s;}
+.day-chevron.open{transform:rotate(180deg);}
+.day-body{padding:0 14px 12px;display:none;}
+.day-body.open{display:block;border-top:1px dashed;}
+.meal-row{display:flex;gap:8px;margin-top:9px;align-items:flex-start;}
+.meal-icon{font-size:14px;min-width:19px;}
+.meal-label{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:1px;}
+body.ar .meal-label{font-size:10px;letter-spacing:0;}
+.meal-text{font-size:12px;color:var(--br);line-height:1.5;font-weight:300;}
+body.ar .meal-text{font-size:12.5px;line-height:1.6;}
+.protein{border:1px solid var(--am);}
+.protein.open-card .day-header{background:var(--ap);}
+.protein .day-badge{background:#a06200;}
+.protein .day-body{border-color:var(--am);}
+.rest{border:1px solid #81c784;}
+.rest.open-card .day-header{background:var(--gp);}
+.rest .day-badge{background:#2e7d32;}
+.rest .day-body{border-color:#81c784;}
+
+/* ── GROCERY ── */
+.grocery-section{background:#fff;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 7px rgba(0,0,0,.06);}
+.grocery-header{background:linear-gradient(90deg,var(--gd),var(--gl));padding:9px 14px;}
+.grocery-header h3{color:#fff;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;}
+body.ar .grocery-header h3{font-family:'Tajawal',sans-serif;}
+.grocery-note{color:#c8e6c9;font-size:10px;margin-top:1px;}
+.grocery-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid #f5f0e8;}
+.grocery-item:last-child{border-bottom:none;}
+.grocery-item.checked{background:#f1f8e9;}
+.grocery-left{display:flex;align-items:center;gap:9px;}
+.checkbox{width:19px;height:19px;border-radius:5px;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;min-width:19px;transition:all .15s;}
+.checkbox.checked{border:none;background:var(--gl);}
+.checkbox-tick{color:#fff;font-size:11px;font-weight:700;display:none;}
+.checkbox.checked .checkbox-tick{display:block;}
+.item-name{font-size:12.5px;transition:all .15s;}
+.item-name.checked{color:#aaa;text-decoration:line-through;}
+.item-qty{font-size:11px;font-weight:700;color:var(--gl);min-width:46px;text-align:right;}
+body.ar .item-qty{text-align:left;}
+.item-qty.checked{color:#ccc;}
+
+/* ── TRAVEL ── */
+.travel-card{background:#fff;border-radius:13px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 7px rgba(0,0,0,.07);}
+.travel-header{padding:11px 15px;}
+.travel-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:15px;color:#2d3748;}
+body.ar .travel-title{font-family:'Tajawal',sans-serif;}
+.travel-body{padding:12px 15px;}
+.travel-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.col-title{font-size:11px;font-weight:700;margin-bottom:6px;}
+.do-title{color:#2e7d32;}
+.dont-title{color:var(--rd);}
+.travel-item{display:flex;gap:5px;margin-bottom:5px;align-items:flex-start;}
+.travel-text{font-size:11.5px;line-height:1.4;}
+body.ar .travel-text{font-size:12px;line-height:1.55;}
+.phrase-row{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid #f5f5f5;}
+.phrase-row:last-child{border-bottom:none;margin:0;padding:0;}
+.phrase-label{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:2px;}
+body.ar .phrase-label{font-size:10px;letter-spacing:0;}
+.phrase-text{font-size:12px;color:var(--gm);font-style:italic;}
+body.ar .phrase-text{font-style:normal;font-size:12.5px;}
+.golden-rule{background:linear-gradient(135deg,var(--gd),var(--gl));border-radius:13px;padding:16px 18px;color:#fff;margin-top:4px;}
+.golden-rule h3{font-family:'Cormorant Garamond',serif;font-size:17px;text-align:center;margin-bottom:9px;}
+body.ar .golden-rule h3{font-family:'Tajawal',sans-serif;}
+.golden-rule p{font-size:12px;line-height:1.7;color:#c8e6c9;}
+body.ar .golden-rule p{font-size:12.5px;}
+.golden-rule strong{color:#fff;}
+.golden-box{margin-top:10px;background:rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.65;color:#e8f5e9;}
+
+/* ── INFO BOXES ── */
+.info-box{border-radius:9px;padding:10px 13px;font-size:11.5px;line-height:1.6;}
+body.ar .info-box{font-size:12.5px;line-height:1.75;}
+.info-amber{background:var(--ap);border:1px solid var(--am);color:#7b5800;}
+.info-green{background:var(--gp);border:1px solid #81c784;color:#2e7d32;}
+.intro-text{color:var(--bl);text-align:center;font-style:italic;font-size:12.5px;margin-bottom:14px;line-height:1.5;}
+body.ar .intro-text{font-style:normal;font-size:13px;}
+
+/* ── API BOX ── */
+.api-box{background:#fffde7;border:1px solid #f9a825;border-radius:11px;padding:13px 15px;margin-bottom:14px;font-size:11.5px;}
+.api-box p{color:#5d4037;margin-bottom:7px;line-height:1.55;}
+body.ar .api-box p{font-size:12.5px;}
+.api-box a{color:var(--gm);font-weight:700;}
+.api-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.api-input{flex:1;min-width:160px;padding:8px 11px;border-radius:8px;border:1px solid #ddd;font-size:12px;font-family:monospace;background:#fff;color:#333;}
+.api-save{background:var(--gm);color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:12px;cursor:pointer;white-space:nowrap;}
+.api-status{font-size:11px;margin-top:5px;}
+.api-status.ok{color:#2e7d32;}
+.api-status.no{color:#888;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;animation:spin .9s linear infinite;}
+</style>
+</head>
+<body>
+
+<!-- ════ PROFILE SCREEN ════ -->
+<div id="profile-screen" class="screen">
+  <div class="ps-header">
+    <span class="ps-leaf">🌿</span>
+    <div class="ps-title" id="ps-title">Al-Tayyibat</div>
+    <div class="ps-sub" id="ps-sub">Choose your profile to continue</div>
+  </div>
+  <div class="ps-grid" id="ps-grid"></div>
+</div>
+
+<!-- ════ PIN SCREEN ════ -->
+<div id="pin-screen" class="screen hidden">
+  <button class="pin-back" onclick="showProfileScreen()">←</button>
+  <div class="pin-avatar" id="pin-avatar"></div>
+  <div class="pin-name" id="pin-name"></div>
+  <div class="pin-prompt" id="pin-prompt">Enter your PIN</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-error-msg" id="pin-error"></div>
+</div>
+
+<!-- ════ CREATE PROFILE SCREEN ════ -->
+<div id="create-screen" class="screen hidden">
+  <div class="create-box">
+    <div class="create-title" id="create-title">New Profile</div>
+    <div class="color-row" id="color-row"></div>
+    <span class="field-label" id="lbl-name">Your name</span>
+    <input class="field-input" id="create-name" type="text" maxlength="12" oninput="validateCreate()">
+    <span class="field-label" id="lbl-pin">Choose a 4-digit PIN</span>
+    <div class="pin-setup-dots" id="setup-dots">
+      <div class="pin-setup-dot"></div><div class="pin-setup-dot"></div>
+      <div class="pin-setup-dot"></div><div class="pin-setup-dot"></div>
+    </div>
+    <div class="pin-setup" id="pin-setup-pad">
+      <button class="pin-setup-key" onclick="setupKey('1')">1</button>
+      <button class="pin-setup-key" onclick="setupKey('2')">2</button>
+      <button class="pin-setup-key" onclick="setupKey('3')">3</button>
+      <button class="pin-setup-key" onclick="setupKey('4')">4</button>
+      <button class="pin-setup-key" onclick="setupKey('5')">5</button>
+      <button class="pin-setup-key" onclick="setupKey('6')">6</button>
+      <button class="pin-setup-key" onclick="setupKey('7')">7</button>
+      <button class="pin-setup-key" onclick="setupKey('8')">8</button>
+      <button class="pin-setup-key" onclick="setupKey('9')">9</button>
+      <button class="pin-setup-key" onclick="setupKey('0')">0</button>
+      <button class="pin-setup-key" onclick="setupDel()">⌫</button>
+    </div>
+    <div class="create-btns" style="margin-top:20px;">
+      <button class="btn-cancel" id="btn-cancel" onclick="showProfileScreen()">Cancel</button>
+      <button class="btn-create" id="btn-create" onclick="createProfile()" disabled>Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MAIN APP ════ -->
+<div id="main-app" class="hidden">
+  <div class="app-header">
+    <div class="app-header-top">
+      <button class="profile-chip" onclick="showProfileScreen()">
+        <div class="chip-dot" id="chip-dot"></div>
+        <span class="chip-name" id="chip-name"></span>
+        <span class="chip-switch" id="chip-switch">↩ switch</span>
+      </button>
+      <button class="lang-btn" onclick="toggleLang()" id="lang-btn">العربية</button>
+    </div>
+    <div class="app-header-center">
+      <div class="app-title" id="app-title">Al-Tayyibat System</div>
+      <div class="app-sub" id="app-sub">Dr. Diaa Al-Awady · Morocco Edition</div>
+      <div class="app-warning" id="app-warning">⚠️ Consult your doctor before any dietary change</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('rules')" id="tab-rules">📋 Rules</button>
+    <button class="tab-btn" onclick="switchTab('plan')" id="tab-plan">📅 Meal Plan</button>
+    <button class="tab-btn" onclick="switchTab('grocery')" id="tab-grocery">🛒 Groceries</button>
+    <button class="tab-btn" onclick="switchTab('travel')" id="tab-travel">✈️ Travel</button>
+  </div>
+  <div class="content">
+    <div id="panel-rules" class="panel active"></div>
+    <div id="panel-plan" class="panel"></div>
+    <div id="panel-grocery" class="panel"></div>
+    <div id="panel-travel" class="panel"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   PROFILE SYSTEM
+═══════════════════════════════════════════════ */
+const COLORS=['#2d5a27','#1565c0','#6a1b9a','#c62828','#e65100','#00695c'];
+let profiles=JSON.parse(localStorage.getItem('tt_profiles')||'[]');
+let activeProfileId=null;
+let pinBuffer='';
+let setupPinBuffer='';
+let selectedColor=COLORS[0];
+let pendingProfileId=null;
+
+function saveProfiles(){localStorage.setItem('tt_profiles',JSON.stringify(profiles));}
+
+function getProfileData(id){
+  return JSON.parse(localStorage.getItem('tt_data_'+id)||'{}');
+}
+function saveProfileData(id,data){
+  localStorage.setItem('tt_data_'+id,JSON.stringify(data));
+}
+
+function showProfileScreen(){
+  activeProfileId=null;
+  showScreen('profile-screen');
+  renderProfileGrid();
+}
+
+function showScreen(id){
+  ['profile-screen','pin-screen','create-screen','main-app'].forEach(s=>{
+    const el=document.getElementById(s);
+    if(s===id){el.classList.remove('hidden');}
+    else{el.classList.add('hidden');}
+  });
+}
+
+function renderProfileGrid(){
+  const L=getUILang();
+  document.getElementById('ps-title').textContent=L==='ar'?'نظام الطيبات':'Al-Tayyibat';
+  document.getElementById('ps-sub').textContent=L==='ar'?'اختر ملفك الشخصي للمتابعة':'Choose your profile to continue';
+  const grid=document.getElementById('ps-grid');
+  let html=profiles.map(p=>`
+    <div class="profile-card" onclick="enterPin('${p.id}')">
+      <div class="profile-avatar" style="background:${p.color}">${p.name.charAt(0).toUpperCase()}</div>
+      <div class="profile-name">${p.name}</div>
+      <div class="profile-hint">${L==='ar'?'اضغط للدخول':'Tap to enter'}</div>
+    </div>`).join('');
+  if(profiles.length<6){
+    html+=`<div class="add-profile-card" onclick="showCreateScreen()">
+      <span class="add-icon">＋</span>
+      <div class="add-label">${L==='ar'?'ملف جديد':'New Profile'}</div>
+    </div>`;}
+  grid.innerHTML=html;
+}
+
+function getUILang(){
+  // global lang preference (not per-profile) for profile screens
+  return localStorage.getItem('tt_ui_lang')||'en';
+}
+
+function enterPin(id){
+  pendingProfileId=id;
+  pinBuffer='';
+  const p=profiles.find(x=>x.id===id);
+  const L=getUILang();
+  document.getElementById('pin-avatar').style.background=p.color;
+  document.getElementById('pin-avatar').textContent=p.name.charAt(0).toUpperCase();
+  document.getElementById('pin-name').textContent=p.name;
+  document.getElementById('pin-prompt').textContent=L==='ar'?'أدخل الرقم السري':'Enter your PIN';
+  document.getElementById('pin-error').textContent='';
+  updatePinDots('pin-dots',0,false);
+  showScreen('pin-screen');
+}
+
+function pinKey(d){
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=d;
+  updatePinDots('pin-dots',pinBuffer.length,false);
+  if(pinBuffer.length===4){
+    const p=profiles.find(x=>x.id===pendingProfileId);
+    if(pinBuffer===p.pin){
+      activeProfileId=pendingProfileId;
+      loadProfile(activeProfileId);
+    } else {
+      const L=getUILang();
+      document.getElementById('pin-error').textContent=L==='ar'?'رقم سري خاطئ. حاول مرة أخرى.':'Wrong PIN. Try again.';
+      updatePinDots('pin-dots',4,true);
+      setTimeout(()=>{pinBuffer='';updatePinDots('pin-dots',0,false);document.getElementById('pin-error').textContent='';},700);
+    }
+  }
+}
+function pinDel(){if(pinBuffer.length>0){pinBuffer=pinBuffer.slice(0,-1);updatePinDots('pin-dots',pinBuffer.length,false);}}
+
+function updatePinDots(containerId,count,error){
+  const dots=document.getElementById(containerId).querySelectorAll('.pin-dot');
+  dots.forEach((d,i)=>{
+    d.classList.toggle('filled',i<count);
+    d.classList.toggle('error',error&&i<count);
+  });
+}
+
+/* ── Create Profile ── */
+function showCreateScreen(){
+  setupPinBuffer='';
+  selectedColor=COLORS[0];
+  document.getElementById('create-name').value='';
+  const L=getUILang();
+  document.getElementById('create-title').textContent=L==='ar'?'ملف شخصي جديد':'New Profile';
+  document.getElementById('lbl-name').textContent=L==='ar'?'اسمك':'Your name';
+  document.getElementById('lbl-pin').textContent=L==='ar'?'اختر رقماً سرياً من 4 أرقام':'Choose a 4-digit PIN';
+  document.getElementById('btn-cancel').textContent=L==='ar'?'إلغاء':'Cancel';
+  document.getElementById('btn-create').textContent=L==='ar'?'إنشاء':'Create';
+  updateSetupDots(0);
+  const colorRow=document.getElementById('color-row');
+  colorRow.innerHTML=COLORS.map(c=>`<div class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`).join('');
+  validateCreate();
+  showScreen('create-screen');
+}
+function selectColor(c){selectedColor=c;document.querySelectorAll('.color-dot').forEach(d=>{d.classList.toggle('selected',d.style.background===c||d.style.backgroundColor===c);});}
+function setupKey(d){if(setupPinBuffer.length>=4)return;setupPinBuffer+=d;updateSetupDots(setupPinBuffer.length);validateCreate();}
+function setupDel(){if(setupPinBuffer.length>0){setupPinBuffer=setupPinBuffer.slice(0,-1);updateSetupDots(setupPinBuffer.length);validateCreate();}}
+function updateSetupDots(count){document.getElementById('setup-dots').querySelectorAll('.pin-setup-dot').forEach((d,i)=>d.classList.toggle('filled',i<count));}
+function validateCreate(){const ok=document.getElementById('create-name').value.trim().length>0&&setupPinBuffer.length===4;document.getElementById('btn-create').disabled=!ok;}
+function createProfile(){
+  const name=document.getElementById('create-name').value.trim();
+  if(!name||setupPinBuffer.length!==4)return;
+  const id='p_'+Date.now();
+  const profile={id,name,color:selectedColor,pin:setupPinBuffer};
+  profiles.push(profile);
+  saveProfiles();
+  // init profile data with defaults
+  saveProfileData(id,{lang:'en',startType:'protein',generation:1,checkedItems:{},currentPlan:null,currentGrocery:null});
+  activeProfileId=id;
+  loadProfile(id);
+}
+
+/* ── Load Profile into App ── */
+function loadProfile(id){
+  const p=profiles.find(x=>x.id===id);
+  const data=getProfileData(id);
+  // set globals from profile data
+  lang=data.lang||'en';
+  startType=data.startType||'protein';
+  generation=data.generation||1;
+  checkedItems=data.checkedItems||{};
+  currentPlan=data.currentPlan||null;
+  currentGrocery=data.currentGrocery||null;
+  openDay=null;
+  // update chip
+  document.getElementById('chip-dot').style.background=p.color;
+  document.getElementById('chip-dot').textContent=p.name.charAt(0).toUpperCase();
+  document.getElementById('chip-name').textContent=p.name;
+  applyLang();
+  renderAll();
+  showScreen('main-app');
+}
+
+function persistProfileData(){
+  if(!activeProfileId)return;
+  const data=getProfileData(activeProfileId);
+  data.lang=lang;data.startType=startType;data.generation=generation;
+  data.checkedItems=checkedItems;data.currentPlan=currentPlan;data.currentGrocery=currentGrocery;
+  saveProfileData(activeProfileId,data);
+}
+
+/* ═══════════════════════════════════════════════
+   APP STATE
+═══════════════════════════════════════════════ */
+let lang='en';
+let startType='protein'; // 'protein' or 'rest'
+let generation=1;
+let checkedItems={};
+let currentPlan=null;
+let currentGrocery=null;
+let openDay=null;
+
+/* ═══════════════════════════════════════════════
+   LANGUAGE DATA
+═══════════════════════════════════════════════ */
+const DATA={
+en:{
+  langBtn:'العربية',dir:'ltr',
+  appTitle:'Al-Tayyibat System',appSub:'Dr. Diaa Al-Awady · Morocco Edition',
+  appWarning:'⚠️ Consult your doctor before any dietary change',
+  chipSwitch:'↩ switch',
+  tabs:['📋 Rules','📅 Meal Plan','🛒 Groceries','✈️ Travel'],
+  rulesIntro:'Memorize these 15 rules — everything you need to apply this system.',
+  cheatTitle:'🚦 Quick Cheat Sheet',
+  badgeProtein:'🟡 Protein Day',badgeRest:'🟢 Rest Day',
+  toggleProtein:'Start with 🥩 Protein',toggleRest:'Start with 🌿 Rest',
+  regenBtn:'🔄 Generate New 15-Day Plan',regenBtnG:'🔄 Regenerate Plan & List',regenLoading:'Generating...',
+  planNote:'Each new plan follows all Al-Tayyibat rules automatically.',
+  groceryIntro:'For 2 people · 15 days · Tap items to check off',
+  groceryTips:'🛒 <strong>Shopping Tips:</strong><br>• Freeze meat in day-portions<br>• Keep extra whole grain toast in the freezer<br>• Restock fruits around Day 7–8<br>• Ghee, butter & olive oil go fast',
+  travelIntro:'How to stay on the Al-Tayyibat system while traveling.',
+  goldenTitle:'🧳 The Golden Travel Rule',
+  goldenText:'<strong>Fish is your best friend when traveling.</strong> On almost every menu, always grilled, fits every protein day.',
+  goldenBox:'<strong>Pack:</strong> dates 🌴, chocolate bars 🍫, whole grain crackers 🍪.',
+  apiTitle:'The <strong>Generate</strong> button needs a free Anthropic API key.',
+  apiLink:'Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Saved locally on this device.',
+  apiSave:'Save',apiOk:'✅ Key saved!',apiNo:'⚪ No key saved',
+  dayLabel:'Day',restDay:'Rest Day — No Protein',
+  meals:['🌅','Breakfast','☀️','Lunch','🌙','Dinner','🍎','Snacks'],
+  doLabel:'✅ DO',dontLabel:'❌ AVOID',phrasesIntro:'Useful phrases for restaurants:',
+  rules:[
+    {icon:'🕐',title:'Eat Only When Truly Hungry',body:'No fixed meal times. Your body tells you when it needs food — listen to it, not the clock.'},
+    {icon:'🛑',title:"Stop the Moment You're Full",body:"No calorie counting, no portion measuring. Eat until satisfied, then stop. 'Eat, get full, get up.'"},
+    {icon:'🔁',title:'Protein Every Other Day',body:'Alternate: protein day → rest day → protein day. Give your digestive system a full day to recover.'},
+    {icon:'🥩',title:'Beef: Max Once a Week',body:'Always boil beef first until fully cooked, then brown in ghee. Never cook it directly in the pan.'},
+    {icon:'🐑',title:'Lamb: Up to Twice a Week',body:'Lamb is the most flexible red meat in this system. It can appear twice per week.'},
+    {icon:'🐟',title:'Fish Must Be Wild/Sea-Caught',body:'Natural sea fish only — no farmed fish. Best grilled with olive oil. Shrimp and squid are forbidden.'},
+    {icon:'🍞',title:'Whole Grain Bread ONLY',body:'White bread in any form is forbidden (pita, croissant, baguette). Only brown/bran/wholegrain toast.'},
+    {icon:'🚫',title:'No White Flour — Ever',body:'Pasta, pizza, cakes, cookies, pastries — all forbidden. This is the #1 rule.'},
+    {icon:'🥚',title:'No Eggs, No Chicken, No Yogurt',body:'Eggs in any form forbidden. No poultry except pigeon & quail (grilled). No fresh milk, yogurt, or white cheese.'},
+    {icon:'🥦',title:'Almost No Raw Vegetables',body:'Cucumber, lettuce, carrots, peppers, spinach, peas, beans — all forbidden. Safe: potatoes, squash, mushrooms, corn.'},
+    {icon:'🍉',title:'Most Fruits Fine — Except Watermelon & Cantaloupe',body:'Apples & pears without skin. Mango as juice only. Pomegranate strained as juice.'},
+    {icon:'💧',title:'Drink When Thirsty Only',body:'No need to force a fixed daily water amount. The body signals thirst when it needs hydration.'},
+    {icon:'🧈',title:'Natural Fats Are Your Friend',body:'Ghee, butter, olive oil, and cream are all encouraged. Natural fats the body handles well.'},
+    {icon:'💊',title:'No Antacids',body:'The system claims acid reflux resolves by following the diet — not by taking antacid medications.'},
+    {icon:'🚶',title:'Move Daily',body:'Even a simple daily walk matters. The system is not complete without physical activity.'},
+  ],
+  cheat:[
+    {label:'✅ Beef',val:'1× / week (boil first!)'},{label:'✅ Lamb',val:'2× / week'},
+    {label:'✅ Fish',val:'Any protein day, grilled'},{label:'✅ Bread',val:'Whole grain ONLY'},
+    {label:'❌ Eggs',val:'All forms forbidden'},{label:'❌ Chicken',val:'Forbidden'},
+    {label:'❌ White flour',val:'All forms forbidden'},{label:'❌ Yogurt/milk',val:'Forbidden'},
+  ],
+  mealPlanProtein:[
+    {day:1,type:'PROTEIN',protein:'Lamb 🐑',breakfast:'Whole grain toast with butter & olives | Green tea',lunch:'Lamb in broth + freekeh | Pumpkin soup',dinner:'Toast with processed cheese & honey',snacks:'Strawberries & kiwi'},
+    {day:2,type:'REST',protein:null,breakfast:'Toast with cream & honey | Coffee',lunch:'Rice with ghee + potato soup',dinner:'Toast with tahini & jam',snacks:'Dates & chocolate'},
+    {day:3,type:'PROTEIN',protein:'Wild Fish 🐟',breakfast:'Toast with cheddar & jam | Green tea',lunch:'Grilled sea fish + rice with olive oil',dinner:'Grilled fish + toast + olives',snacks:'Peeled apple & banana'},
+    {day:4,type:'REST',protein:null,breakfast:'Toast with Nutella | Coffee',lunch:'Mashed potatoes with butter + mushrooms',dinner:'Toast with Edam/Gouda & honey',snacks:'Mixed berries with cream & honey'},
+    {day:5,type:'PROTEIN',protein:'Beef 🥩',breakfast:'Toast with butter & olives | Green tea',lunch:'Boiled-then-browned beef + rice with ghee',dinner:'Beef kofta + oven-roasted potatoes',snacks:'Pomegranate juice + dates'},
+    {day:6,type:'REST',protein:null,breakfast:'Toast with cream & honey | Coffee',lunch:'Creamy corn soup + toast',dinner:'Toast with tahini & jam',snacks:'Banana & chocolate'},
+    {day:7,type:'PROTEIN',protein:'Lamb 🐑',breakfast:'Toast with butter & processed cheese | Green tea',lunch:'Lamb & butternut squash stew',dinner:'Toast with cheddar + olives',snacks:'Blueberries with honey'},
+    {day:8,type:'REST',protein:null,breakfast:'Toast with tahini & honey | Coffee',lunch:'Rice with ghee + crispy potato wedges',dinner:'Mushrooms in butter on toast',snacks:'Peeled apple + kiwi'},
+    {day:9,type:'PROTEIN',protein:'Wild Fish 🐟',breakfast:'Toast with cheddar & jam | Green tea',lunch:'Grilled fish + freekeh in fish broth',dinner:'Fish with mashed potatoes',snacks:'Grapes & blueberries'},
+    {day:10,type:'REST',protein:null,breakfast:'Toast with cream & honey | Coffee',lunch:'Pumpkin soup + sweet potato',dinner:'Toast with mozzarella & jam',snacks:'Dates + tahini halva'},
+    {day:11,type:'PROTEIN',protein:'Beef 🥩',breakfast:'Toast with butter & olives | Green tea',lunch:'Baked beef + potato tray with butter & olive oil',dinner:'Beef kofta + white rice',snacks:'Fresh pomegranate juice'},
+    {day:12,type:'REST',protein:null,breakfast:'Toast with tahini & jam | Coffee',lunch:'Sweet potato + mushroom sauté + rice',dinner:'Toast with processed cheese & olives',snacks:'Banana + chocolate'},
+    {day:13,type:'PROTEIN',protein:'Lamb 🐑',breakfast:'Toast with Edam/Gouda | Green tea',lunch:'Lamb liver in ghee + rice + pickled lemon',dinner:'Lamb kofta + oven potatoes',snacks:'Mixed fruits (apple, strawberries, kiwi)'},
+    {day:14,type:'REST',protein:null,breakfast:'Toast with cream & honey | Coffee',lunch:'Corn on the cob + butternut squash soup',dinner:'Toast with tahini & honey',snacks:'Peeled pear + dates'},
+    {day:15,type:'PROTEIN',protein:'Wild Fish 🐟',breakfast:'Toast with cheddar & jam | Green tea',lunch:'Grilled fish + rice in fish broth',dinner:'Toast with mozzarella & olives',snacks:'Mixed berries with cream'},
+  ],
+  grocery:[
+    {category:'🥩 Meats & Fish',note:'Buy fresh & freeze in day-portions',items:[{name:'Beef cuts (boiling & browning)',qty:'1.5 kg'},{name:'Ground beef (kofta)',qty:'600 g'},{name:'Lamb cuts (shoulder or leg)',qty:'2 kg'},{name:'Lamb liver',qty:'400 g'},{name:'Wild/sea fish (sea bass, mullet)',qty:'2.5 kg'}]},
+    {category:'🍞 Grains & Bread',items:[{name:'Whole grain / bran brown toast',qty:'5 packs'},{name:'White rice',qty:'2.5 kg'},{name:'Freekeh',qty:'1 kg'}]},
+    {category:'🧈 Dairy & Fats',items:[{name:'Ghee / samna',qty:'500 g'},{name:'Unsalted butter',qty:'500 g'},{name:'Cream / qashta',qty:'6 cans'},{name:'Cheddar cheese',qty:'400 g'},{name:'Mozzarella',qty:'300 g'},{name:'Edam or Gouda',qty:'200 g'},{name:'Processed cheese triangles',qty:'3 boxes'}]},
+    {category:'🥔 Vegetables',note:'Raw vegetables mostly forbidden',items:[{name:'Potatoes',qty:'3 kg'},{name:'Sweet potatoes',qty:'1 kg'},{name:'Butternut squash',qty:'1.5 kg'},{name:'Pumpkin',qty:'1.5 kg'},{name:'Mushrooms',qty:'500 g'},{name:'Corn (cobs or frozen)',qty:'6/400 g'},{name:'Olives',qty:'1 jar'}]},
+    {category:'🍎 Fruits',note:'Restock mid-week',items:[{name:'Apples',qty:'2 kg'},{name:'Bananas',qty:'2 bunches'},{name:'Strawberries',qty:'1 kg'},{name:'Kiwi',qty:'10 pcs'},{name:'Grapes',qty:'1 kg'},{name:'Pomegranates',qty:'6 pcs'},{name:'Blueberries',qty:'400 g'},{name:'Figs or pears',qty:'1 kg'},{name:'Dates',qty:'500 g'}]},
+    {category:'🫒 Oils & Condiments',items:[{name:'Extra virgin olive oil',qty:'750 ml'},{name:'Honey (pure)',qty:'1 jar'},{name:'Jam',qty:'2 jars'},{name:'Tahini',qty:'1 jar'},{name:'Tahini halva',qty:'1 pack'}]},
+    {category:'🍫 Sweets & Snacks',items:[{name:'Nutella',qty:'1 jar'},{name:'Chocolate bars',qty:'6 bars'},{name:'Plain potato chips',qty:'5 bags'}]},
+    {category:'☕ Drinks',items:[{name:'Coffee (no creamers)',qty:'1 pack'},{name:'Green tea bags',qty:'1 box'},{name:'Herbal teas',qty:'1 box'}]},
+  ],
+  travel:[
+    {context:'🏨 Hotel Breakfast',color:'#e8f5e9',border:'#4a7c3f',
+      dos:['Ask for brown/whole grain toast — skip bread if unavailable','Allowed cheeses: cheddar, gouda, processed triangles','Butter, honey, cream if available','Peel apples & pears; take bananas, grapes, kiwi, figs','Black coffee or green tea — no milk'],
+      donts:['Croissants, white toast, bagels, baguette, pancakes, waffles','Any egg dish','Yogurt, labneh, milk, fresh white cheese','Pastries, muffins, white-flour cereal']},
+    {context:'🍽️ Restaurant',color:'#fff8e1',border:'#f4a200',
+      dos:['Grilled fish: safest option everywhere','Lamb chops, tagine (no prunes/sugar), lamb kofta','Beef/kofta — direct cooking OK when away from home','Rice or couscous with ghee instead of sauce','Butter-based roasted or mashed potatoes'],
+      donts:['Pasta, pizza, sandwiches, wraps','Flour-thickened sauces (béchamel etc.)','Chicken, turkey, any poultry','Salads (raw vegetables)','Cakes, pastries, wafer ice cream']},
+    {context:'🎒 Carry These Always',color:'#e3f2fd',border:'#1976d2',
+      dos:['Dates — energy-dense, always allowed','1–2 squares of chocolate between meals','Whole grain crackers (check: no white flour)','Bananas & grapes travel best'],
+      donts:['Granola bars (usually contain white flour)','White-flour crackers','Airport sandwiches or baguette snacks']},
+    {context:'✈️ On the Plane',color:'#f3e5f5',border:'#7b1fa2',
+      dos:['Choose fish on flight menu','Eat rice/potato side, skip the bread roll','Take the cheese portion','Fruit cup for dessert','Bring dates & chocolate as backup'],
+      donts:['The bread roll (always white flour)','Cake or cookie portion','Airport instant noodles','Airport croissants or sandwiches']},
+    {context:'💬 How to Order',color:'#fce4ec',border:'#c62828',
+      phrases:[
+        {label:'Bread',text:'"Do you have brown/whole grain bread? If not, no bread please."'},
+        {label:'Fish',text:'"Grilled please, olive oil and lemon on the side."'},
+        {label:'Meat',text:'"Can I have the lamb/beef without any flour-based sauce?"'},
+        {label:'Sides',text:'"Can I replace the salad with roasted potatoes or plain rice?"'},
+        {label:'Dessert',text:'"Just a fruit plate, or nothing."'},
+      ]},
+  ],
+},
+ar:{
+  langBtn:'English',dir:'rtl',
+  appTitle:'نظام الطيبات',appSub:'د. ضياء العوضي · النسخة المغربية',
+  appWarning:'⚠️ استشر طبيبك قبل البدء بأي تغيير غذائي',
+  chipSwitch:'↩ تغيير',
+  tabs:['📋 القواعد','📅 خطة الوجبات','🛒 التسوق','✈️ السفر'],
+  rulesIntro:'احفظ هذه القواعد الـ 15 — كل ما تحتاجه لتطبيق هذا النظام بثقة.',
+  cheatTitle:'🚦 ورقة المراجعة السريعة',
+  badgeProtein:'🟡 يوم بروتين',badgeRest:'🟢 يوم راحة',
+  toggleProtein:'ابدأ بـ 🥩 يوم بروتين',toggleRest:'ابدأ بـ 🌿 يوم راحة',
+  regenBtn:'🔄 توليد خطة جديدة لـ 15 يوم',regenBtnG:'🔄 تجديد الخطة وقائمة التسوق',regenLoading:'جارٍ التوليد...',
+  planNote:'كل خطة جديدة تتبع قواعد نظام الطيبات تلقائياً.',
+  groceryIntro:'لشخصين · 15 يوم · اضغط على الأصناف لتحديدها',
+  groceryTips:'🛒 <strong>نصائح التسوق:</strong><br>• جمّد اللحم في حصص يومية مُعلَّمة<br>• احتفظ بتوست إضافي في المجمد<br>• أعِد تزويد الفاكهة عند اليوم 7-8<br>• السمنة والزبدة وزيت الزيتون تنفد بسرعة',
+  travelIntro:'كيف تحافظ على نظام الطيبات أثناء السفر.',
+  goldenTitle:'🧳 القاعدة الذهبية للسفر',
+  goldenText:'<strong>السمك هو أفضل صديق لك في السفر.</strong> متاح في كل مكان، دائماً مشوي، يناسب كل يوم بروتين.',
+  goldenBox:'<strong>ضع في حقيبتك:</strong> تمر 🌴، شوكولاتة 🍫، بسكويت حبوب كاملة 🍪.',
+  apiTitle:'زر <strong>التوليد</strong> يحتاج مفتاح API مجاني من Anthropic.',
+  apiLink:'احصل عليه من <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. يُحفظ محلياً على هذا الجهاز.',
+  apiSave:'حفظ',apiOk:'✅ تم حفظ المفتاح!',apiNo:'⚪ لم يُحفظ مفتاح بعد',
+  dayLabel:'اليوم',restDay:'يوم راحة — بدون بروتين',
+  meals:['🌅','فطور','☀️','غداء','🌙','عشاء','🍎','وجبات خفيفة'],
+  doLabel:'✅ افعل',dontLabel:'❌ تجنب',phrasesIntro:'عبارات مفيدة في المطاعم:',
+  rules:[
+    {icon:'🕐',title:'كُل فقط حين تجوع حقاً',body:'لا مواعيد أكل ثابتة. جسمك يخبرك متى يحتاج للطعام — أنصت إليه لا للساعة.'},
+    {icon:'🛑',title:'توقف فور الشبع',body:'لا عدّ للسعرات ولا قياس للحصص. "كُل واشبع وقُم."'},
+    {icon:'🔁',title:'البروتين كل يوم بدل',body:'يوم بروتين ← يوم راحة ← يوم بروتين. أعطِ جهازك الهضمي وقتاً للتعافي.'},
+    {icon:'🥩',title:'لحم البقر: مرة أسبوعياً كحد أقصى',body:'اسلقه أولاً حتى ينضج تماماً ثم حمّره بالسمنة. لا تطبخه مباشرة في المقلاة.'},
+    {icon:'🐑',title:'لحم الضأن: مرتين أسبوعياً كحد أقصى',body:'هو اللحم الأحمر الأكثر مرونة في هذا النظام.'},
+    {icon:'🐟',title:'السمك يجب أن يكون برياً/بحرياً',body:'أسماك البحر الطبيعية فقط. الأفضل مشوي بزيت الزيتون. الجمبري والحبار محظوران.'},
+    {icon:'🍞',title:'خبز الحبوب الكاملة فقط',body:'الخبز الأبيض بأي شكل محظور. فقط التوست البني/النخالة/الحبوب الكاملة.'},
+    {icon:'🚫',title:'لا دقيق أبيض — أبداً',body:'المعكرونة، البيتزا، الكيك، البسكويت، المعجنات — كلها محظورة.'},
+    {icon:'🥚',title:'لا بيض، لا دجاج، لا زبادي',body:'البيض بأي شكل محظور. لا دواجن إلا الحمام والسمان (مشوي). لا حليب طازج أو زبادي أو جبن أبيض.'},
+    {icon:'🥦',title:'تقريباً لا خضراوات نيئة',body:'الخيار، الخس، الجزر، الفلفل، السبانخ، البازلاء، الفاصولياء — كلها محظورة.'},
+    {icon:'🍉',title:'معظم الفاكهة مسموح بها — ما عدا البطيخ والشمام',body:'التفاح والكمثرى بدون قشر. المانجو عصيراً فقط. الرمان مصفى.'},
+    {icon:'💧',title:'اشرب الماء عند العطش فقط',body:'لا حاجة لإجبار نفسك على كمية ثابتة يومياً.'},
+    {icon:'🧈',title:'الدهون الطبيعية صديقتك',body:'السمنة والزبدة وزيت الزيتون والقشطة كلها مشجَّعة.'},
+    {icon:'💊',title:'لا أدوية الحموضة',body:'النظام يؤكد أن حرقة المعدة تزول باتباع الحمية.'},
+    {icon:'🚶',title:'تحرك يومياً',body:'حتى المشي اليومي البسيط مهم.'},
+  ],
+  cheat:[
+    {label:'✅ لحم البقر',val:'مرة/أسبوع (اسلقه أولاً!)'},{label:'✅ لحم الضأن',val:'مرتان/أسبوع'},
+    {label:'✅ السمك',val:'أي يوم بروتين، مشوي'},{label:'✅ الخبز',val:'حبوب كاملة فقط'},
+    {label:'❌ البيض',val:'كل أشكاله محظور'},{label:'❌ الدجاج',val:'محظور'},
+    {label:'❌ الدقيق الأبيض',val:'كل أشكاله محظور'},{label:'❌ الزبادي/الحليب',val:'محظور'},
+  ],
+  mealPlanProtein:[
+    {day:1,type:'PROTEIN',protein:'لحم ضأن 🐑',breakfast:'توست حبوب كاملة مع زبدة وزيتون | شاي أخضر',lunch:'لحم ضأن في المرق + فريكة | شوربة قرع',dinner:'توست مع جبن مثلثات وعسل',snacks:'فراولة وكيوي'},
+    {day:2,type:'REST',protein:null,breakfast:'توست مع قشطة وعسل | قهوة',lunch:'أرز بالسمنة + شوربة بطاطس',dinner:'توست مع طحينة ومربى',snacks:'تمر وشوكولاتة'},
+    {day:3,type:'PROTEIN',protein:'سمك بحري 🐟',breakfast:'توست مع شيدر ومربى | شاي أخضر',lunch:'سمك بحري مشوي + أرز بزيت الزيتون',dinner:'سمك مشوي + توست + زيتون',snacks:'تفاح مقشور وموز'},
+    {day:4,type:'REST',protein:null,breakfast:'توست مع نوتيلا | قهوة',lunch:'بطاطس مهروسة بالزبدة + فطر مقلي',dinner:'توست مع إيدام/غودا وعسل',snacks:'خليط توت مع قشطة وعسل'},
+    {day:5,type:'PROTEIN',protein:'لحم بقر 🥩',breakfast:'توست مع زبدة وزيتون | شاي أخضر',lunch:'لحم بقر مسلوق ثم محمر بالسمنة + أرز',dinner:'كفتة بقر + بطاطس مشوية بالفرن',snacks:'عصير رمان مصفى + تمر'},
+    {day:6,type:'REST',protein:null,breakfast:'توست مع قشطة وعسل | قهوة',lunch:'شوربة ذرة كريمية بالزبدة + توست',dinner:'توست مع طحينة ومربى',snacks:'موز وشوكولاتة'},
+    {day:7,type:'PROTEIN',protein:'لحم ضأن 🐑',breakfast:'توست مع زبدة وجبن مثلثات | شاي أخضر',lunch:'لحم ضأن مع قرع عسلي في المرق',dinner:'توست مع شيدر وزيتون',snacks:'توت أزرق مع عسل'},
+    {day:8,type:'REST',protein:null,breakfast:'توست مع طحينة وعسل | قهوة',lunch:'أرز بالسمنة + بطاطس ويدجز مقرمشة',dinner:'فطر بالزبدة على توست',snacks:'تفاح مقشور + كيوي'},
+    {day:9,type:'PROTEIN',protein:'سمك بحري 🐟',breakfast:'توست مع شيدر ومربى | شاي أخضر',lunch:'سمك بحري مشوي + فريكة بمرق السمك',dinner:'سمك مع بطاطس مهروسة بالزبدة',snacks:'عنب وتوت أزرق'},
+    {day:10,type:'REST',protein:null,breakfast:'توست مع قشطة وعسل | قهوة',lunch:'شوربة قرع بالزبدة + بطاطا حلوة',dinner:'توست مع موزاريلا ومربى',snacks:'تمر + حلاوة طحينية'},
+    {day:11,type:'PROTEIN',protein:'لحم بقر 🥩',breakfast:'توست مع زبدة وزيتون | شاي أخضر',lunch:'صينية لحم بقر + بطاطس بالفرن',dinner:'كفتة بقر + أرز أبيض',snacks:'عصير رمان طازج مصفى'},
+    {day:12,type:'REST',protein:null,breakfast:'توست مع طحينة ومربى | قهوة',lunch:'بطاطا حلوة + فطر مقلي + أرز بالسمنة',dinner:'توست مع جبن مثلثات وزيتون',snacks:'موز + شوكولاتة'},
+    {day:13,type:'PROTEIN',protein:'لحم ضأن 🐑',breakfast:'توست مع إيدام/غودا | شاي أخضر',lunch:'كبدة ضأن بالسمنة + أرز + ليمون مخلل',dinner:'كفتة ضأن + بطاطس بالفرن',snacks:'خليط فاكهة (تفاح، فراولة، كيوي)'},
+    {day:14,type:'REST',protein:null,breakfast:'توست مع قشطة وعسل | قهوة',lunch:'ذرة بالزبدة + شوربة قرع عسلي',dinner:'توست مع طحينة وعسل',snacks:'كمثرى مقشورة + تمر'},
+    {day:15,type:'PROTEIN',protein:'سمك بحري 🐟',breakfast:'توست مع شيدر ومربى | شاي أخضر',lunch:'سمك بحري مشوي + أرز بمرق السمك',dinner:'توست مع موزاريلا وزيتون',snacks:'خليط توت مع قشطة وعسل'},
+  ],
+  grocery:[
+    {category:'🥩 اللحوم والسمك',note:'اشترِ طازجاً وجمّد في حصص يومية',items:[{name:'قطع لحم بقر (للسلق والتحمير)',qty:'1.5 كغ'},{name:'لحم بقر مفروم (كفتة)',qty:'600 غ'},{name:'قطع لحم ضأن (كتف أو ساق)',qty:'2 كغ'},{name:'كبدة ضأن',qty:'400 غ'},{name:'سمك بحري طبيعي',qty:'2.5 كغ'}]},
+    {category:'🍞 الحبوب والخبز',items:[{name:'توست حبوب كاملة / نخالة',qty:'5 أكياس'},{name:'أرز أبيض',qty:'2.5 كغ'},{name:'فريكة',qty:'1 كغ'}]},
+    {category:'🧈 الألبان والدهون',items:[{name:'سمنة بلدي',qty:'500 غ'},{name:'زبدة غير مملحة',qty:'500 غ'},{name:'قشطة',qty:'6 علب'},{name:'جبن شيدر',qty:'400 غ'},{name:'جبن موزاريلا',qty:'300 غ'},{name:'جبن إيدام أو غودا',qty:'200 غ'},{name:'جبن مثلثات مطبوخ',qty:'3 علب'}]},
+    {category:'🥔 الخضراوات',note:'الخضراوات النيئة محظورة في معظمها',items:[{name:'بطاطس',qty:'3 كغ'},{name:'بطاطا حلوة',qty:'1 كغ'},{name:'قرع عسلي',qty:'1.5 كغ'},{name:'يقطين',qty:'1.5 كغ'},{name:'فطر',qty:'500 غ'},{name:'ذرة',qty:'6 كيزان/400 غ'},{name:'زيتون',qty:'علبة 1'}]},
+    {category:'🍎 الفاكهة',note:'أعِد التزويد في منتصف الأسبوع',items:[{name:'تفاح',qty:'2 كغ'},{name:'موز',qty:'عرجونان'},{name:'فراولة',qty:'1 كغ'},{name:'كيوي',qty:'10 حبات'},{name:'عنب',qty:'1 كغ'},{name:'رمان',qty:'6 حبات'},{name:'توت أزرق',qty:'400 غ'},{name:'تين أو كمثرى',qty:'1 كغ'},{name:'تمر',qty:'500 غ'}]},
+    {category:'🫒 الزيوت والتوابل',items:[{name:'زيت زيتون بكر ممتاز',qty:'750 مل'},{name:'عسل طبيعي',qty:'جرة كبيرة'},{name:'مربى',qty:'جرتان'},{name:'طحينة',qty:'جرة 1'},{name:'حلاوة طحينية',qty:'عبوة 1'}]},
+    {category:'🍫 الحلويات والوجبات الخفيفة',items:[{name:'نوتيلا',qty:'جرة 1'},{name:'ألواح شوكولاتة',qty:'6 ألواح'},{name:'شيبس عادي',qty:'5 أكياس'}]},
+    {category:'☕ المشروبات',items:[{name:'قهوة (بدون كريمة)',qty:'علبة 1'},{name:'شاي أخضر',qty:'علبة 1'},{name:'أعشاب',qty:'علبة 1'}]},
+  ],
+  travel:[
+    {context:'🏨 بوفيه إفطار الفندق',color:'#e8f5e9',border:'#4a7c3f',
+      dos:['اطلب توست أسمر/حبوب كاملة — تجنب الخبز إن لم يتوفر','جبن شيدر، غودا، مثلثات مطبوخ','زبدة وعسل وقشطة إن وُجدت','قشّر التفاح والكمثرى؛ خذ موزاً وعنباً وكيوي وتيناً','قهوة سوداء أو شاي أخضر — بدون حليب'],
+      donts:['كرواسان، توست أبيض، باغيت، فطائر، وافل','أي طبق بيض','زبادي، لبن، حليب، جبن أبيض طازج','معجنات، مافن، حبوب إفطار']},
+    {context:'🍽️ غداء وعشاء في المطعم',color:'#fff8e1',border:'#f4a200',
+      dos:['السمك المشوي: خيارك الأآمن في كل مكان','ضلوع ضأن، طاجين ضأن، كفتة ضأن','لحم بقر أو كفتة — الطهي المباشر حتمي أحياناً خارج المنزل','أرز أو كسكس بالسمنة/الزبدة','بطاطس مشوية أو مهروسة بالزبدة'],
+      donts:['معكرونة أو بيتزا أو ساندويش','صلصات مكثفة بالدقيق','دجاج أو ديك رومي أو أي دواجن','سلطات (خضراوات نيئة)','كيك، معجنات، آيس كريم بالوافر']},
+    {context:'🎒 وجبات خفيفة للحمل دائماً',color:'#e3f2fd',border:'#1976d2',
+      dos:['التمر — أفضل رفيق سفر','1-2 مربع شوكولاتة بين الوجبات','بسكويت حبوب كاملة (100% حبوب كاملة)','الموز والعنب يتحملان السفر أكثر من غيرهما'],
+      donts:['ألواح الجرانولا (تحتوي غالباً دقيقاً أبيض)','بسكويت دقيق أبيض','ساندويشات المطارات أو الباغيت']},
+    {context:'✈️ على متن الطائرة',color:'#f3e5f5',border:'#7b1fa2',
+      dos:['اختر خيار السمك إن وُجد','كُل الأرز أو البطاطس وتجنب رغيف الخبز','خذ الجبن من الصينية','كوب فاكهة كحلوى','احضر تمراً وشوكولاتة كاحتياط'],
+      donts:['رغيف الخبز (دائماً دقيق أبيض)','الكيك أو البسكويت من الصينية','نودلز فورية في المطار','كرواسان أو ساندويش من مقاهي المطارات']},
+    {context:'💬 كيف تطلب في المطعم',color:'#fce4ec',border:'#c62828',
+      phrases:[
+        {label:'للخبز',text:'"هل عندكم خبز أسمر أو حبوب كاملة؟ إن لم يتوفر، بدون خبز."'},
+        {label:'للسمك',text:'"مشوي من فضلك، مع زيت زيتون وليمون على الجانب."'},
+        {label:'للحم',text:'"هل يمكن تقديم اللحم/الضأن بدون صلصة تحتوي دقيقاً؟"'},
+        {label:'للمرافقات',text:'"هل يمكن استبدال السلطة ببطاطس مشوية أو أرز سادة؟"'},
+        {label:'للحلوى',text:'"طبق فاكهة من فضلك، أو لا شيء."'},
+      ]},
+  ],
+}};
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function t(){return DATA[lang];}
+
+function getActivePlan(){
+  if(currentPlan) return currentPlan;
+  const plan=JSON.parse(JSON.stringify(t().mealPlanProtein));
+  if(startType==='rest'){
+    // Rotate the whole plan by 1: Day 2 content becomes Day 1, Day 3 → Day 2, ..., Day 1 → Day 15
+    // This way both the labels AND the actual meals shift together correctly
+    const rotated=[...plan.slice(1), plan[0]];
+    return rotated.map((d,i)=>({...d, day:i+1}));
+  }
+  return plan;
+}
+
+function getActiveGrocery(){return currentGrocery||t().grocery;}
+
+/* ═══════════════════════════════════════════════
+   APPLY LANGUAGE
+═══════════════════════════════════════════════ */
+function applyLang(){
+  const d=t();
+  document.documentElement.lang=lang;
+  document.documentElement.dir=d.dir;
+  document.body.className=lang==='ar'?'ar':'';
+  localStorage.setItem('tt_ui_lang',lang);
+  document.getElementById('lang-btn').textContent=d.langBtn;
+  document.getElementById('app-title').textContent=d.appTitle;
+  document.getElementById('app-sub').textContent=d.appSub;
+  document.getElementById('app-warning').textContent=d.appWarning;
+  document.getElementById('chip-switch').textContent=d.chipSwitch;
+  const tabIds=['tab-rules','tab-plan','tab-grocery','tab-travel'];
+  d.tabs.forEach((l,i)=>document.getElementById(tabIds[i]).textContent=l);
+  persistProfileData();
+}
+
+function toggleLang(){lang=lang==='en'?'ar':'en';applyLang();renderAll();}
+
+/* ═══════════════════════════════════════════════
+   RENDER ALL
+═══════════════════════════════════════════════ */
+function renderAll(){renderRules();renderPlan();renderGrocery();renderTravel();}
+
+/* ── RULES ── */
+function renderRules(){
+  const d=t();
+  document.getElementById('panel-rules').innerHTML=`
+    <p class="intro-text">${d.rulesIntro}</p>
+    ${d.rules.map((r,i)=>`<div class="rule-card"><div class="rule-icon">${r.icon}</div><div><div class="rule-title">${i+1}. ${r.title}</div><div class="rule-body">${r.body}</div></div></div>`).join('')}
+    <div class="cheat-sheet"><h3>${d.cheatTitle}</h3><div class="cheat-grid">${d.cheat.map(c=>`<div class="cheat-item"><div class="cheat-label">${c.label}</div><div class="cheat-val">${c.val}</div></div>`).join('')}</div></div>`;
+}
+
+/* ── PLAN ── */
+function renderPlan(){
+  const d=t();
+  const plan=getActivePlan();
+  const daysHtml=plan.map(day=>{
+    const isP=day.type==='PROTEIN';
+    const isOpen=openDay===day.day;
+    const m=d.meals;
+    return `<div class="day-card ${isP?'protein':'rest'} ${isOpen?'open-card':''}" id="day-${day.day}">
+      <div class="day-header" onclick="toggleDay(${day.day})">
+        <div class="day-header-left">
+          <span class="day-badge">${d.dayLabel} ${day.day}</span>
+          <span class="day-title">${isP?(day.protein||'—'):d.restDay}</span>
+        </div>
+        <span class="day-chevron ${isOpen?'open':''}">▼</span>
+      </div>
+      <div class="day-body ${isOpen?'open':''}">
+        ${[[m[0],m[1],day.breakfast],[m[2],m[3],day.lunch],[m[4],m[5],day.dinner],[m[6],m[7],day.snacks]].map(row=>`<div class="meal-row"><span class="meal-icon">${row[0]}</span><div><span class="meal-label">${row[1]}</span><div class="meal-text">${row[2]}</div></div></div>`).join('')}
+      </div></div>`;
+  }).join('');
+
+  document.getElementById('panel-plan').innerHTML=`
+    <div class="regen-wrap">
+      <div class="badges">
+        <span class="badge badge-protein">${d.badgeProtein}</span>
+        <span class="badge badge-rest">${d.badgeRest}</span>
+        <span class="badge badge-gen">Plan #${generation}</span>
+      </div>
+      <div class="day-toggle">
+        <button class="day-toggle-btn ${startType==='protein'?'active':''}" onclick="setStartType('protein')">${d.toggleProtein}</button>
+        <button class="day-toggle-btn ${startType==='rest'?'active':''}" onclick="setStartType('rest')">${d.toggleRest}</button>
+      </div>
+      <button class="regen-btn" id="regen-btn-plan" onclick="regenerate()">🔄 ${lang==='ar'?'توليد خطة جديدة لـ 15 يوم':'Generate New 15-Day Plan'}</button>
+      <div class="error-msg" id="plan-error"></div>
+    </div>
+    <div id="api-key-box-plan"></div>
+    ${daysHtml}
+    <div class="info-box info-amber" style="margin-top:10px;">${d.planNote}</div>`;
+  renderApiBox();
+}
+
+function setStartType(type){
+  startType=type;
+  openDay=null;
+  currentPlan=null;
+  persistProfileData();
+  renderPlan();
+}
+
+function toggleDay(day){openDay=openDay===day?null:day;renderPlan();}
+
+/* ── GROCERY ── */
+function renderGrocery(){
+  const d=t();
+  const grocery=getActiveGrocery();
+  document.getElementById('panel-grocery').innerHTML=`
+    <div class="regen-wrap" style="margin-bottom:10px;">
+      <p class="intro-text" style="margin-bottom:10px;">${d.groceryIntro}</p>
+      <button class="regen-btn" id="regen-btn-grocery" onclick="regenerate()">🔄 ${lang==='ar'?'تجديد الخطة وقائمة التسوق':'Regenerate Plan & List'}</button>
+    </div>
+    ${grocery.map(section=>`
+      <div class="grocery-section">
+        <div class="grocery-header"><h3>${section.category}</h3>${section.note?`<div class="grocery-note">${section.note}</div>`:''}</div>
+        ${section.items.map(item=>{
+          const key=section.category+'__'+item.name;
+          const checked=!!checkedItems[key];
+          return `<div class="grocery-item ${checked?'checked':''}" onclick="toggleItem('${key.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><div class="grocery-left"><div class="checkbox ${checked?'checked':''}"><span class="checkbox-tick">✓</span></div><span class="item-name ${checked?'checked':''}">${item.name}</span></div><span class="item-qty ${checked?'checked':''}">${item.qty}</span></div>`;
+        }).join('')}
+      </div>`).join('')}
+    <div class="info-box info-green">${d.groceryTips}</div>`;
+}
+
+function toggleItem(key){
+  checkedItems[key]=!checkedItems[key];
+  persistProfileData();
+  renderGrocery();
+}
+
+/* ── TRAVEL ── */
+function renderTravel(){
+  const d=t();
+  document.getElementById('panel-travel').innerHTML=`
+    <p class="intro-text">${d.travelIntro}</p>
+    ${d.travel.map(tip=>`
+      <div class="travel-card" style="border:1px solid ${tip.border}">
+        <div class="travel-header" style="background:${tip.color};border-bottom:1px solid ${tip.border}"><div class="travel-title">${tip.context}</div></div>
+        <div class="travel-body">${tip.phrases
+          ?`<p style="font-size:11.5px;color:#666;margin-bottom:9px;font-style:italic;">${d.phrasesIntro}</p>${tip.phrases.map(p=>`<div class="phrase-row"><span class="phrase-label">${p.label}</span><span class="phrase-text">${p.text}</span></div>`).join('')}`
+          :`<div class="travel-cols"><div><div class="col-title do-title">${d.doLabel}</div>${tip.dos.map(x=>`<div class="travel-item"><span style="color:#4a7c3f;font-size:11px">•</span><span class="travel-text" style="color:#3d2b1f">${x}</span></div>`).join('')}</div><div><div class="col-title dont-title">${d.dontLabel}</div>${tip.donts.map(x=>`<div class="travel-item"><span style="color:#e57373;font-size:11px">•</span><span class="travel-text" style="color:#777">${x}</span></div>`).join('')}</div></div>`}
+        </div>
+      </div>`).join('')}
+    <div class="golden-rule"><h3>${d.goldenTitle}</h3><p>${d.goldenText}</p><div class="golden-box">${d.goldenBox}</div></div>`;
+}
+
+/* ── API BOX ── */
+function renderApiBox(){
+  const d=t();
+  const saved=localStorage.getItem('tt_apikey')||'';
+  const box=document.getElementById('api-key-box-plan');
+  if(!box)return;
+  box.innerHTML=`<div class="api-box"><p>${d.apiTitle}<br>${d.apiLink}</p><div class="api-row"><input class="api-input" id="api-key-input" type="password" placeholder="${d.apiSave==='Save'?'sk-ant-...':'sk-ant-...'}" value="${saved}"><button class="api-save" onclick="saveApiKey()">${d.apiSave}</button></div><div class="api-status ${saved?'ok':'no'}" id="api-status">${saved?d.apiOk:d.apiNo}</div></div>`;
+}
+
+function saveApiKey(){
+  const d=t();
+  const key=document.getElementById('api-key-input').value.trim();
+  localStorage.setItem('tt_apikey',key);
+  const s=document.getElementById('api-status');
+  s.className='api-status '+(key?'ok':'no');
+  s.textContent=key?d.apiOk:d.apiNo;
+}
+
+/* ── REGENERATE ── */
+const SYS=`You are a meal planner for the Al-Tayyibat dietary system. Return ONLY valid JSON, no markdown. Rules: alternate protein/rest days; beef MAX 1x/week (boil first then brown in ghee); lamb MAX 2x/week; wild sea fish on any protein day; NO eggs/chicken/yogurt/milk/white cheese/white flour; ONLY whole grain toast; allowed veg: potatoes,sweet potatoes,butternut squash,pumpkin,mushrooms,corn; allowed dairy: ghee,butter,cream,cheddar,mozzarella,edam/gouda,processed cheese; allowed fruit: apples(peeled),pears(peeled),bananas,strawberries,kiwi,grapes,pomegranate juice,blueberries,figs,dates,mango juice; Moroccan ingredients; vary recipes. Return: {"mealPlan":[{"day":1,"type":"PROTEIN","protein":"Lamb","breakfast":"...","lunch":"...","dinner":"...","snacks":"..."}],"groceryList":[{"category":"Meats","note":"...","items":[{"name":"...","qty":"..."}]}]}`;
+
+async function regenerate(){
+  const apiKey=localStorage.getItem('tt_apikey')||'';
+  const errEl=document.getElementById('plan-error');
+  if(!apiKey){if(errEl)errEl.textContent=lang==='ar'?'الرجاء إدخال مفتاح API أولاً.':'Please enter your API key first.';return;}
+  const b1=document.getElementById('regen-btn-plan'),b2=document.getElementById('regen-btn-grocery');
+  const loading=lang==='ar'?'جارٍ التوليد...':'Generating...';
+  if(b1){b1.disabled=true;b1.innerHTML='<span style="display:inline-block;animation:spin .9s linear infinite">⏳</span> '+loading;}
+  if(b2){b2.disabled=true;b2.innerHTML='<span style="display:inline-block;animation:spin .9s linear infinite">⏳</span> '+loading;}
+  if(errEl)errEl.textContent='';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:SYS,messages:[{role:'user',content:'Fresh 15-day plan, generation #'+(generation+1)+'. Start type: '+startType+'. Vary recipes. JSON only.'}]})
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const text=data.content.map(i=>i.text||'').join('');
+    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+    currentPlan=parsed.mealPlan;
+    currentGrocery=parsed.groceryList;
+    checkedItems={};
+    generation++;
+    openDay=null;
+    persistProfileData();
+    renderPlan();renderGrocery();
+  }catch(err){
+    if(errEl)errEl.textContent=(lang==='ar'?'خطأ: ':'Error: ')+(err.message||'Try again.');
+  }finally{
+    const d=t();
+    const b1=document.getElementById('regen-btn-plan'),b2=document.getElementById('regen-btn-grocery');
+    if(b1){b1.disabled=false;b1.innerHTML='🔄 '+(lang==='ar'?'توليد خطة جديدة لـ 15 يوم':'Generate New 15-Day Plan');}
+    if(b2){b2.disabled=false;b2.innerHTML='🔄 '+(lang==='ar'?'تجديد الخطة وقائمة التسوق':'Regenerate Plan & List');}
+  }
+}
+
+/* ── TABS ── */
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const ids=['rules','plan','grocery','travel'];
+  document.querySelectorAll('.tab-btn')[ids.indexOf(tab)].classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── PWA MANIFEST ── */
+(function(){
+  const m={name:'Al-Tayyibat · الطيبات',short_name:'الطيبات',start_url:'./',display:'standalone',background_color:'#fdf6e3',theme_color:'#1a3a14',orientation:'portrait-primary',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="%231a3a14"/><text y="380" x="256" text-anchor="middle" font-size="320">🌿</text></svg>',sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+  const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('link');
+  link.rel='manifest';link.href=url;
+  document.head.appendChild(link);
+})();
+
+/* ── INIT ── */
+const savedUiLang=localStorage.getItem('tt_ui_lang')||'en';
+if(savedUiLang==='ar'){document.documentElement.lang='ar';document.documentElement.dir='rtl';document.body.className='ar';}
+renderProfileGrid();
+showScreen('profile-screen');
+</script>
+</body>
+</html>
